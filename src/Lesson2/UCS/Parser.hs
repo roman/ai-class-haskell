@@ -18,7 +18,7 @@ parseCity =
                tillComma <*
                comma)
   where
-    entry = UCSNode . City . toString
+    entry = Node . City . toString
 
 parseCost = 
     skipSpace *> decimal <* tillEOL <* eol

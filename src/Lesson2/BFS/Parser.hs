@@ -18,9 +18,9 @@ parseCity =
                tillComma <*
                comma)
   where
-    entry = BasicNode . City . toString
+    entry = Node . City . toString
 
-parseEntry :: Parser (BasicGraph City)
+parseEntry :: Parser (Graph BasicEdge City)
 parseEntry = do
     a <- parseCity
     b <- parseCity
@@ -33,6 +33,6 @@ parseEntry = do
       appendNode a    $
       appendNode b emptyGraph
 
-parseGraph :: Parser (BasicGraph City)
+parseGraph :: Parser (Graph BasicEdge City)
 parseGraph = mconcat <$> many1 parseEntry
 

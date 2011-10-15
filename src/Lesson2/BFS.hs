@@ -1,10 +1,10 @@
 module Lesson2.BFS  
   (
-    BasicNode(..) 
+    Node(..) 
   , BasicEdge(..)
-  , BasicGraph(..)
-  , basicGraphEdges
-  , basicGraphNodes
+  , Graph(..)
+  , graphEdges
+  , graphNodes
   , enumBFS 
   , consumeTillNode
   , parseGraph
@@ -16,7 +16,9 @@ import Data.Attoparsec.Enumerator (iterParser)
 import Data.Enumerator (run_, ($$))
 import Data.Enumerator.Binary (enumFile)
 
+import Lesson2.Enumerator
 import Lesson2.Types
+
 import Lesson2.BFS.Enumerator
 import Lesson2.BFS.Types
 import Lesson2.BFS.Parser 
@@ -27,9 +29,9 @@ main = do
   graph <- run_ $ 
            enumFile "src/Lesson2/Input.txt" $$ iterParser parseGraph
   -- Set the initial State
-  let startNode = BasicNode (City "Arad")
+  let startNode = Node (City "Arad")
   -- Set the goal State
-  let goalNode  = BasicNode (City "Bucharest")
+  let goalNode  = Node (City "Bucharest")
   -- Run basic BFS
   result <- run_ $ enumBFS startNode graph $$ consumeTillNode goalNode 
   -- Print visit order
