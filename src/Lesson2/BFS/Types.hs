@@ -45,7 +45,6 @@ instance Hashable a => Monoid (BasicGraph a) where
     BasicGraph (n0 `mappend` n1)
                (e0 `mappend` e1)
 
-
 instance Hashable a => Hashable (BasicNode a) where
   hash (BasicNode a) = 0 `hashWithSalt` a
 
