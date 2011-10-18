@@ -77,12 +77,12 @@ appendNode node = modL graphNodes (Set.insert node)
 getNodeNeighbours :: (Hashable a, EdgeLike e) 
                   => Node a 
                   -> Graph e a 
-                  -> [(Maybe Integer, Node a)]
+                  -> [Node a]
 getNodeNeighbours n =
     Set.fold getOtherNode [] .
     getL graphEdges
   where
     getOtherNode e acc 
-      | getEdgeSource e == n = (getEdgeCost e, getEdgeSink e) : acc
+      | getEdgeSource e == n = getEdgeSink e : acc
       | otherwise            = acc
 

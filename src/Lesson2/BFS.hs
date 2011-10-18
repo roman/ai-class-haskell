@@ -11,11 +11,13 @@ module Lesson2.BFS
   , main
   ) where
 
-import Control.Monad (mapM_)
+import Control.Monad (forM_)
 import Data.Attoparsec.Enumerator (iterParser)
-import Data.Enumerator (run_, ($$))
+import Data.Enumerator (run_, ($$), (=$))
 import Data.Enumerator.Binary (enumFile)
+import Data.Maybe (fromMaybe)
 
+import Exploration.Enumerator
 import Lesson2.Enumerator
 import Lesson2.Types
 
@@ -33,7 +35,12 @@ main = do
   -- Set the goal State
   let goalNode  = Node (City "Bucharest")
   -- Run basic BFS
-  result <- run_ $ enumBFS startNode graph $$ consumeTillNode goalNode 
+  result <- run_ $ enumBFS startNode graph $$ removeVisited =$ consumeTillNode goalNode 
   -- Print visit order
-  mapM_ print result
+  forM_ result $ \event -> do
+    putStr $ "[cost: " ++ show (nvCost event) ++ "] "
+    putStr $ show $ fromMaybe (nvVal event) (nvParent event)
+    putStr " -> "
+    putStrLn $ show (nvVal event)
+  
 
