@@ -17,7 +17,7 @@ import Data.Enumerator (run_, ($$), (=$))
 import Data.Enumerator.Binary (enumFile)
 import Data.Maybe (fromMaybe)
 
-import Exploration.Enumerator
+import Navigation.Enumerator
 import Lesson2.Enumerator
 import Lesson2.Types
 
@@ -35,7 +35,9 @@ main = do
   -- Set the goal State
   let goalNode  = Node (City "Bucharest")
   -- Run basic BFS
-  result <- run_ $ enumBFS startNode graph $$ removeVisited =$ consumeTillNode goalNode 
+  result <- run_ $ enumBFS startNode graph $$ 
+                   removeVisited =$ 
+                   consumeTillNode goalNode 
   -- Print visit order
   forM_ result $ \event -> do
     putStr $ "[cost: " ++ show (nvCost event) ++ "] "

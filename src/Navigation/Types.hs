@@ -1,4 +1,4 @@
-module Exploration.Types where
+module Navigation.Types where
 
 import Data.Set (Set)
 

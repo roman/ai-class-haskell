@@ -9,7 +9,7 @@ import Data.Enumerator (
   , yield
   )
 
-import Exploration.Types
+import Navigation.Types
 import Lesson2.Types
 
 consumeTillNode :: (Monad m, Hashable a)

@@ -1,7 +1,7 @@
-module Exploration.Enumerator (
+module Navigation.Enumerator (
     enumNavigation
   , removeVisited
-  , module Exploration.Types
+  , module Navigation.Types
   ) where
 
 import Control.Monad (liftM)
@@ -18,12 +18,12 @@ import qualified Data.Enumerator.List as EL
 
 --------------------
 
-import Exploration.Types
+import Navigation.Types
 
 -------------------------------------------------------------------------------
 
 enumNavigation :: (Ord a, MonadIO m)
-               => (a -> m Integer)
+               => (a -> a -> m Integer)
                -> (a -> m [a])
                -> a
                -> Enumerator (NavEvent a) m b
@@ -52,7 +52,7 @@ enumNavigation costFn actionsFn zero =
           | otherwise -> do
 
             children0     <- actionsFn node
-            childrenCosts <- mapM (((+cost) `liftM`) . costFn) 
+            childrenCosts <- mapM (((+cost) `liftM`) . costFn node) 
                                   children0
             let children = Set.fromList $ zip3 childrenCosts
                                                children0

@@ -21,7 +21,7 @@ import Data.Hashable (Hashable(..))
 
 --------------------
 
-import Exploration.Enumerator
+import Navigation.Enumerator
 import Lesson2.Types
 import Lesson2.BFS.Types
 
@@ -32,7 +32,7 @@ enumBFS :: (MonadIO m, Hashable a)
         -> BFSGraph a
         -> Enumerator (NavEvent (Node a)) m b
 enumBFS source0 g = 
-    enumNavigation (const $ return 1)
+    enumNavigation (\_ _ -> return 1)
                    (return . (`getNodeNeighbours` g))
                    source0
 

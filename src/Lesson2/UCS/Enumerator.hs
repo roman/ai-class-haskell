@@ -1,6 +1,7 @@
 module Lesson2.UCS.Enumerator where
 
 import Control.Monad.Trans (MonadIO, liftIO)
+import Data.Lens.Common (getL)
 import Data.Enumerator (
    Stream(..)
   , Step(..)
@@ -12,45 +13,32 @@ import Data.Enumerator (
   , yield
   )
 import Data.Hashable (Hashable(..))
-import Data.Ord (Ord(..), comparing)
+import Data.Maybe (fromJust)
 
 import qualified Data.Set as Set
 
+import Navigation.Enumerator
 import Lesson2.Types
 import Lesson2.UCS.Types
-
--------------------------------------------------------------------------------
-
-newtype FrontierEntry a
-  = FE { fromFE :: (Integer, Node a) }
-  deriving (Show, Eq, Ord)
 
 -------------------------------------------------------------------------------
 
 enumUCS :: (MonadIO m, Show a, Hashable a)
         => Node a
         -> UCSGraph a
-        -> Enumerator (Node a) m b
-enumUCS source0 g =
-    go Set.empty (Set.singleton $ FE (0, source0))
+        -> Enumerator (NavEvent (Node a)) m b
+enumUCS zero g =
+    enumNavigation findCost
+                   (return . (`getNodeNeighbours` g))
+                   zero
   where
-    go _ _ step@(Yield {}) = returnI step
-    go explored0 frontier0 step@(Continue consumer) = Iteratee $
-      case Set.minView frontier0 of
-        Just (FE (i, source), frontier1) ->
-          if source `Set.member` explored0
-            then runIteratee $ consumer (Chunks []) >>== go explored0 frontier1
-            else do
-              let explored = Set.insert source explored0
-              let frontier = Set.union frontier1                        .
-                             Set.fromList                               .
-                             Prelude.map (\(Just c, n) -> FE (i + c, n))     .
-                             Prelude.filter ((`Set.notMember` explored) .
-                                             snd)                       $
-                             getNodeNeighbours source g
-              runIteratee $ consumer (Chunks [source]) >>== go explored frontier
-        Nothing -> return step
-
--------------------------------------------------------------------------------
-
+    findCost parent child = 
+      return .
+      head .
+      Set.fold (processEdge parent child) [] $ 
+      getL graphEdges g
+    processEdge parent child e acc 
+      | getEdgeSource e == parent && 
+        getEdgeSink e == child = fromJust (getEdgeCost e) : acc
+      | otherwise = acc
 
